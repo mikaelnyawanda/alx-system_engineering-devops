@@ -1,0 +1,4 @@
+# 103-dig_the-data
+#!/usr/bin/env bash
+# This script groups and sorts Apache log data
+awk '{print $1, $9}' apache-access.log | sort | uniq -c | sort -nr

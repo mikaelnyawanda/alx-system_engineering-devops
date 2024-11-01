@@ -1,0 +1,4 @@
+# 102-lets_parse_apache_logs
+#!/usr/bin/env bash
+# This script parses Apache log files
+awk '{print $1, $9}' apache-access.log

@@ -1,0 +1,7 @@
+# 100-read_and_cut
+#!/usr/bin/env bash
+# This script displays specific content of the /etc/passwd file
+while IFS=: read -r username _ userid _ _ homedir _
+do
+    echo "$username:$userid:$homedir"
+done < "/etc/passwd"
