@@ -1,9 +1,10 @@
-# 2-while_best_school
 #!/usr/bin/env bash
-# This script is displaying "Best School" 10 times
-count=0
-while [ $count -lt 10 ]
+# Print 'best shcoll' 10 times
+
+i=0
+
+while [ $i -lt 10 ]
 do
     echo "Best School"
-    ((count++))
+    ((i++))
 done
