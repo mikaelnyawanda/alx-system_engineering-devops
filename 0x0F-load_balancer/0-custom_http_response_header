@@ -1,39 +1,33 @@
-#!/usr/bin/env bash
-#Configure Nginx with custom header X-Served-By
+nstalls Nginx with the following configurations:
+#+    Listens on port 80.
+#+    Returns a page containing "Hello World!" when queried
+#+     at the root with a curl GET request.
+# Configures /redirect_me as a "301 Moved Permanently".
+# Includes a custom 404 page containing "Ceci n'est pas une page".
 
-# Update package list and install nginx if not installed
-apt-get update
-apt-get install -y nginx
+sudo apt-get update
+sudo apt-get install -y nginx
 
-# Create nginx default page
-echo "Hello World!" > /var/www/html/index.html
+sudo mkdir /etc/nginx/html
+sudo touch /etc/nginx/html/index.html
+echo "Hello World!" > /etc/nginx/html/index.html
+sudo touch /etc/nginx/html/404.html
+echo "Ceci n'est pas une page" > /etc/nginx/html/404.html
 
-# Get hostname
-HOSTNAME=$(hostname)
-
-# Configure nginx with custom header
-CONFIG_TEXT="server {
-    listen 80 default_server;
+printf %s "server {
+    listen 80;
     listen [::]:80 default_server;
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-    server_name _;
     add_header X-Served-By $HOSTNAME;
-    location / {
-        try_files \$uri \$uri/ =404;
+    root   /etc/nginx/html;
+    index  index.html index.htm;
+    location /redirect_me {
+       return 301 https://youtu.be/3_mt7qZldLs;
     }
-}"
+    error_page 404 /404.html;
+    location /404 {
+      root /etc/nginx/html;
+      internal;
+    }
+}" > /etc/nginx/sites-available/default
 
-# Backup original config if it exists
-if [ -f /etc/nginx/sites-available/default ]; then
-    cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
-fi
-
-# Write new config
-echo "$CONFIG_TEXT" > /etc/nginx/sites-available/default
-
-# Test nginx configuration
-nginx -t
-
-# Restart nginx to apply changes
-service nginx restart
+sudo service nginx restart
