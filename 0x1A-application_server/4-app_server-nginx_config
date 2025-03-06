@@ -1,0 +1,48 @@
+#Task 4
+# This script configures Nginx for AirBnB_clone_v2
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+    
+    server_name 54.89.141.6;
+    
+    # AirBnB API configuration
+    location /api/ {
+        proxy_pass http://0.0.0.0:5002;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Existing previous configurations
+    location = /airbnb-onepage/ {
+        proxy_pass http://0.0.0.0:5000/airbnb-onepage/;
+    }
+    
+    location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+        proxy_pass http://0.0.0.0:5001/number_odd_or_even/$1;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:5003/2-hbnb;
+    }
+    
+    location /static {
+        proxy_pass http://127.0.0.1:5003;
+    }
+    
+    # Error page configuration
+    error_page 404 /custom_404.html;
+    location = /custom_404.html {
+        root /usr/share/nginx/html;
+        internal;
+    }
+    
+    # Additional headers
+    add_header X-Served-By "806484-web-01";
+    rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;
+}
